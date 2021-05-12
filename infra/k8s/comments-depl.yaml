@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+# 👇 Exact type of object we want to create
+kind: Deployment
+# Config options for the object we are about to create
+metadata:
+  # This deployments name should be 'comments-depl'
+  name: comments-depl
+# Specifications we want to apply to the object we are about to create
+spec:
+  # Replicas is the number of pods we want to create running some particular image
+  replicas: 1
+  # Taka a look at all the different pods created labeled: 'app: pods' also label can be
+  # Key-value pair like 'testKey: testFValue' it has no exact meaning
+  selector:
+    matchLabels:
+      app: comments
+  # The exact configuration of a pod we want this deployment to create
+  template:
+  # This config will add to pod when deployment creates it
+    metadata:
+      labels:
+        app: comments
+    spec:
+      # And inside the pod we want exactly one container named 'comments' and build that container
+      # using image of 'levandocker321/comments'
+      containers:
+        - name: comments
+        # We provide version at the end of the tag bcz docker automatically set :latest and we doesn't want it to happen
+        # Bcz kubernetes when sees it, tries to find this image in listed on a docker hub not our local computer
+          image: levandocker321/comments
+# Configuration to create comments ip service
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: comments-srv
+spec:
+  # Its type attribute's default value (ClusterIP)
+  type: ClusterIP
+  selector:
+    # We want to find all the different pods labeled and expose pods outside of world
+    # Label: 'app: pods' are like classNames in HTML we can select broad range using this label
+    app: comments
+  ports:
+    - name: comments
+      protocol: TCP
+      # Web browser to Node port service
+      port: 4001
+      # Node port service to ->> Pod
+      targetPort: 4001

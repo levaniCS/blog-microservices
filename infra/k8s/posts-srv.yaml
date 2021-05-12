@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: posts-srv
+spec:
+  type: NodePort
+  selector:
+    # We want to find all the different pods labeled and expose pods outside of world
+    # Label: 'app: pods' are like classNames in HTML we can select broad range using this label
+    app: posts
+  ports:
+    - name: posts
+      protocol: TCP
+      # Web browser to Node port service
+      port: 4000
+      # Node port service to ->> Pod
+      targetPort: 4000
