@@ -8,6 +8,7 @@ app.post('/events', async (req, res) => {
   const { type, data } = req.body;
 
   if(type === 'CommentCreated') {
+    console.log('comment moderateedd', type)
     const status = data.content.includes('orange') ? 'rejected' : 'approved';
 
     // Fire this event in Event bus

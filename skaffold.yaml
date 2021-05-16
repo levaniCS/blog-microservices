@@ -1,0 +1,70 @@
+apiVersion: skaffold/v2alpha1
+kind: Config
+deploy:
+  # starts skaffold
+  # when we change apply directory files
+  # whenever we stop skaffold find all the objects related to this config file and delete theme
+  kubectl:
+    manifests:
+    # Watch all this directory and if any of this file changed
+    # skaffold will automatically re-apply config file to kubernetes cluster
+      - ./infra/k8s/*
+build:
+  # Not push docker hub automatically
+  local:
+    push: false
+  # This artifacts section telling to scaffold that something in our project needs to be maintain
+  # There goin to be some pod that is running code out of the client directory
+  # Whenever something changes in client project skaffold will automatically tries to update pod (client)
+  #  skaffold will update two cases:
+  # 1) when we change js file
+  # 2) rebuild current image and update pod (exp. when we add new dependancy to package.json)
+  artifacts:
+    - image: levandocker321/client
+      context: client
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*.js'
+            dest: .
+    - image: levandocker321/comments
+      context: comments
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: '*.js'
+            dest: .
+    - image: levandocker321/event-bus
+      context: event-bus
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: '*.js'
+            dest: .
+    - image: levandocker321/moderation
+      context: moderation
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: '*.js'
+            dest: .
+    - image: levandocker321/posts
+      context: posts
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: '*.js'
+            dest: .
+    - image: levandocker321/query
+      context: query
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: '*.js'
+            dest: .

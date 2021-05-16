@@ -30,6 +30,7 @@ const handleEvent = (type, data) => {
   }
 
   if(type === 'CommentModerated') {
+    console.log('COMMENT MODERATED IN QUERY AND SET', data)
     const { id, content, postId, status } = data
     const post = posts[postId]
     const comment = post.comments.find(c => c.id === id)
@@ -45,6 +46,7 @@ app.get('/posts', (req, res) => {
 
 app.post('/events', (req, res) => {
   const { type, data } = req.body;
+  console.log('EVENT FIRED IN QUERY: ', type)
   handleEvent(type,data)
   res.send({})
 })
@@ -53,7 +55,7 @@ app.listen(4002, async () => {
   console.log('Listening on 4002')
 
   // That give us all the events thats gonna make over time
-  const res = await axios.get('http://event-bus-srv:4005/events')
+  const res = await axios.get('http://event-bus-srv:4005/events').catch(() => {})
   for(let event of res.data) {
     console.log('PROCESSING EVENT', event.type)
     handleEvent(event.type, event.data)

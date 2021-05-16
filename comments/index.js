@@ -31,7 +31,7 @@ app.post('/posts/:id/comments', async (req, res) => {
       content,
       status: 'pending'
     }
-  })
+  }).catch(() => {})
 
   commentsByPostId[postId] = comments
 
